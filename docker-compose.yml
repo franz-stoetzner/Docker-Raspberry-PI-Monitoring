@@ -9,8 +9,7 @@ services:
     user: "472"
     networks:
       - internal
-    ports:
-      - "4000:3000"
+      - frontend
     env_file:
       - ./grafana/.env
     volumes:
@@ -27,6 +26,13 @@ services:
     labels:
       - "com.example.description=Grafana Dashboard"
       - "com.example.service=monitoring"
+      - traefik.enable=true
+      - traefik.docker.network=frontend
+      - traefik.http.routers.pihole-http.rule=Host(`grafana.home.4stz.de`)
+      - traefik.http.routers.pihole-http.entrypoints=websecure
+      - traefik.http.routers.pihole-http.tls=true
+      - traefik.http.routers.pihole-http.middlewares=management-access@file
+      - traefik.http.services.pihole-http.loadbalancer.server.port=3000
     logging:
       driver: "json-file"
       options:
@@ -160,6 +166,9 @@ volumes:
       - "com.example.service=monitoring"
 
 networks:
+  frontend:
+    external: true
+
   internal:
     driver: bridge
     ipam:
