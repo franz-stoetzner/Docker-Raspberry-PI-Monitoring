@@ -28,11 +28,11 @@ services:
       - "com.example.service=monitoring"
       - traefik.enable=true
       - traefik.docker.network=frontend
-      - traefik.http.routers.pihole-http.rule=Host(`grafana.home.4stz.de`)
-      - traefik.http.routers.pihole-http.entrypoints=websecure
-      - traefik.http.routers.pihole-http.tls=true
-      - traefik.http.routers.pihole-http.middlewares=management-access@file
-      - traefik.http.services.pihole-http.loadbalancer.server.port=3000
+      - traefik.http.routers.grafana-http.rule=Host(`grafana.home.4stz.de`)
+      - traefik.http.routers.grafana-http.entrypoints=websecure
+      - traefik.http.routers.grafana-http.tls=true
+      - traefik.http.routers.grafana-http.middlewares=management-access@file
+      - traefik.http.services.grafana-http.loadbalancer.server.port=3000
     logging:
       driver: "json-file"
       options:
