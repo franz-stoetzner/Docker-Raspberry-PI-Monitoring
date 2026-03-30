@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  node-exporter:
+    container_name: monitoring-node-exporter
+    image: prom/node-exporter:v1.9.1
+    hostname: rpi-exporter
+    restart: unless-stopped
+    network_mode: host        # wichtig: direkt auf Host-Port 9100
+    pid: host                 # für korrekte CPU/Prozess-Metriken
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/host
+      - --collector.filesystem.ignored-mount-points
+      - ^/(sys|proc|dev|host|etc)($$|/)
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  cadvisor:
+    container_name: monitoring-cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.51.0
+    hostname: rpi-cadvisor
+    restart: unless-stopped
+    network_mode: host        # direkt auf Host-Port 8080
+    cap_add:
+      - SYS_ADMIN
+    command:
+      - '-housekeeping_interval=15s'
+      - '-docker_only=true'
+      - '-store_container_labels=false'
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+      - /etc/machine-id:/etc/machine-id:ro
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
