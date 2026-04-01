@@ -3,7 +3,7 @@ contactPoints:
     - orgId: 1
       name: email receiver
       receivers:
-        - uid: ""
+        - uid: aaaaaaaaaaaaaa
           type: email
           settings:
             addresses: <example@email.com>
