@@ -1,0 +1,19 @@
+apiVersion: 1
+contactPoints:
+    - orgId: 1
+      name: email receiver
+      receivers:
+        - uid: ""
+          type: email
+          settings:
+            addresses: <example@email.com>
+          disableResolveMessage: false
+    - orgId: 1
+      name: ntfy
+      receivers:
+        - uid: cfhqngj75zq4ge
+          type: webhook
+          settings:
+            httpMethod: POST
+            url: https://ntfy.home.4stz.de/Heimnetz
+          disableResolveMessage: false
