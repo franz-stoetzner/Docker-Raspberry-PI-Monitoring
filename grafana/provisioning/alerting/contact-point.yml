@@ -7,5 +7,5 @@ contactPoints:
           type: webhook
           settings:
             httpMethod: POST
-            url: http://ntfy:80//Heimnetz
+            url: http://ntfy:80/Heimnetz
           disableResolveMessage: false
