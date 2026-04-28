@@ -475,15 +475,9 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: threshold
+              expression: A
               conditions:
                 - evaluator:
                     type: gt
                     params: [0]
-                  operator:
-                    type: and
-                  query:
-                    params: [A]
-                  reducer:
-                    type: last
-                    params: []
