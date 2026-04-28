@@ -43,8 +43,7 @@ groups:
             datasourceUid: "-100"  # Grafana built-in expression datasource
             model:
               refId: B
-              type: threshold
-              expression: A
+              type: classic_conditions
               conditions:
                 - evaluator:
                     type: gt
