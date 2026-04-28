@@ -1,11 +1,13 @@
 apiVersion: 1
+ 
 contactPoints:
-    - orgId: 1
-      name: ntfy
-      receivers:
-        - uid: cfhqngj75zq4ge
-          type: webhook
-          settings:
-            httpMethod: POST
-            url: http://ntfy:80/Heimnetz
-          disableResolveMessage: false
+  - orgId: 1
+    name: ntfy-heimnetz
+    receivers:
+      - uid: ntfy-heimnetz-webhook
+        type: webhook
+        disableResolveMessage: false
+        settings:
+          url: http://ntfy:80/Heimnetz
+          httpMethod: POST
+          message: '{{ template "ntfy.message" . }}'
