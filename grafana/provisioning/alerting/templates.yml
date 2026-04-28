@@ -1,5 +1,5 @@
 apiVersion: 1
- 
+
 templates:
   - orgId: 1
     name: ntfy
@@ -10,7 +10,6 @@ templates:
       {{ else -}}
       ✅ Wieder normal
       {{ end -}}
-      Instanz:  {{ (index .Alerts 0).Labels.instance }}
-      CPU-Last: {{ (index .Alerts 0).Annotations.cpu_value }}
-      Seit:     {{ (index .Alerts 0).StartsAt | date "02.01.2006 15:04" }} Uhr
+      {{ (index .Alerts 0).Annotations.summary }}
+      Seit: {{ (index .Alerts 0).StartsAt | date "02.01.2006 15:04" }} Uhr
       {{- end }}

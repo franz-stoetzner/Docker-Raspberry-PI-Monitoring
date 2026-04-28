@@ -6,6 +6,10 @@ groups:
     folder: Infrastruktur
     interval: 1m
     rules:
+
+      # ---------------------------------------------------------------
+      # CPU > 85% sustained 5 min
+      # ---------------------------------------------------------------
       - uid: cpu-busy-85-alert
         title: "CPU Busy > 85%"
         condition: B
@@ -13,10 +17,10 @@ groups:
         noDataState: NoData
         execErrState: Error
         isPaused: false
+        labels:
+          severity: warning
         annotations:
-          summary: "CPU-Auslastung auf {{ $labels.instance }} bei {{ $values.A.Value | printf \"%.1f\" }}%"
-          cpu_value: "{{ $values.A.Value | printf \"%.1f\" }}%"
-        labels: {}
+          summary: "CPU-Last auf {{ $labels.instance }}: {{ $values.A.Value | printf \"%.1f\" }}%"
         data:
           - refId: A
             relativeTimeRange:
@@ -31,29 +35,410 @@ groups:
                   / on(instance) group_left()
                   sum by(instance) (irate(node_cpu_seconds_total{}[5m]))
                 ) * 100
-              interval: ""
               legendFormat: "{{instance}}"
               range: true
               refId: A
-
           - refId: B
             relativeTimeRange:
               from: 0
               to: 0
-            datasourceUid: "-100"  # Grafana built-in expression datasource
+            datasourceUid: "-100"
             model:
               refId: B
               type: classic_conditions
               conditions:
                 - evaluator:
                     type: gt
-                    params:
-                      - 85
+                    params: [85]
                   operator:
                     type: and
                   query:
-                    params:
-                      - A
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # RAM > 90% sustained 5 min
+      # ---------------------------------------------------------------
+      - uid: ram-high-90-alert
+        title: "RAM > 90%"
+        condition: B
+        for: 5m
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: "RAM-Auslastung auf {{ $labels.instance }}: {{ $values.A.Value | printf \"%.1f\" }}%"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              expr: >
+                100 - (
+                  node_memory_MemAvailable_bytes
+                  / node_memory_MemTotal_bytes * 100
+                )
+              legendFormat: "{{instance}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [90]
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # Disk > 85% (Warning) sustained 10 min
+      # ---------------------------------------------------------------
+      - uid: disk-warn-85-alert
+        title: "Disk > 85% (Warning)"
+        condition: B
+        for: 10m
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk-Auslastung auf {{ $labels.instance }} ({{ $labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              expr: >
+                100 - (
+                  node_filesystem_avail_bytes{fstype!~"rootfs|tmpfs|overlay"}
+                  / node_filesystem_size_bytes{fstype!~"rootfs|tmpfs|overlay"} * 100
+                )
+              legendFormat: "{{instance}} {{mountpoint}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [85]
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # Disk > 93% (Critical) sustained 5 min
+      # ---------------------------------------------------------------
+      - uid: disk-crit-93-alert
+        title: "Disk > 93% (Critical)"
+        condition: B
+        for: 5m
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: "KRITISCH – Disk-Auslastung auf {{ $labels.instance }} ({{ $labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              expr: >
+                100 - (
+                  node_filesystem_avail_bytes{fstype!~"rootfs|tmpfs|overlay"}
+                  / node_filesystem_size_bytes{fstype!~"rootfs|tmpfs|overlay"} * 100
+                )
+              legendFormat: "{{instance}} {{mountpoint}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [93]
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # Inodes > 80%
+      # ---------------------------------------------------------------
+      - uid: inodes-high-80-alert
+        title: "Inodes > 80%"
+        condition: B
+        for: 5m
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: "Inode-Auslastung auf {{ $labels.instance }} ({{ $labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              expr: >
+                100 - (
+                  node_filesystem_files_free{fstype!~"rootfs|tmpfs|overlay"}
+                  / node_filesystem_files{fstype!~"rootfs|tmpfs|overlay"} * 100
+                )
+              legendFormat: "{{instance}} {{mountpoint}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [80]
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # Container Restart-Loop: >= 3 Restarts in 10 min
+      # ---------------------------------------------------------------
+      - uid: container-restart-loop-alert
+        title: "Container Restart-Loop"
+        condition: B
+        for: 0s
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: warning
+        annotations:
+          summary: "Container {{ $labels.name }} auf {{ $labels.instance }} wurde {{ $values.A.Value | printf \"%.0f\" }}x in 10 min neu gestartet"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              expr: increase(container_restart_count{name=~".+"}[10m])
+              legendFormat: "{{instance}} / {{name}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [2]  # > 2 bedeutet >= 3
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # Container dauerhaft down > 2 min
+      # ---------------------------------------------------------------
+      - uid: container-down-alert
+        title: "Container down"
+        condition: B
+        for: 2m
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: "Container {{ $labels.name }} auf {{ $labels.instance }} läuft nicht mehr"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              # Feuert wenn ein benannter Container existiert, aber nicht im State "running" ist
+              expr: container_tasks_state{state="running", name=~".+"}
+              legendFormat: "{{instance}} / {{name}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]  # running == 0 → Container ist nicht aktiv
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # OOM-Killer aktiv
+      # ---------------------------------------------------------------
+      - uid: oom-killer-alert
+        title: "OOM-Killer aktiv"
+        condition: B
+        for: 0s
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: "OOM-Killer auf {{ $labels.instance }} wurde ausgelöst"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              expr: increase(node_vmstat_oom_kill[5m])
+              legendFormat: "{{instance}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
+
+      # ---------------------------------------------------------------
+      # Host nicht erreichbar > 1 min
+      # ---------------------------------------------------------------
+      - uid: host-unreachable-alert
+        title: "Host nicht erreichbar"
+        condition: B
+        for: 1m
+        noDataState: Alerting  # Kein Scrape = Host down → sofort feuern
+        execErrState: Alerting
+        isPaused: false
+        labels:
+          severity: critical
+        annotations:
+          summary: "Host {{ $labels.instance }} ist nicht erreichbar (Node Exporter antwortet nicht)"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: t4f0shgRk
+            model:
+              editorMode: code
+              expr: up{job=~".*node.*"}
+              legendFormat: "{{instance}}"
+              range: true
+              refId: A
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: lt
+                    params: [1]  # up == 0 → nicht erreichbar
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
                   reducer:
                     type: last
                     params: []
