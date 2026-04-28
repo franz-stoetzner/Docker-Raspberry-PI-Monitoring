@@ -442,3 +442,48 @@ groups:
                   reducer:
                     type: last
                     params: []
+
+      # ---------------------------------------------------------------
+      # TEST-Alert – immer aktiv, zum Prüfen der ntfy-Anbindung
+      # Nach erfolgreichem Test: isPaused: true setzen oder Regel löschen
+      # ---------------------------------------------------------------
+      - uid: test-alert-ntfy
+        title: "TEST – Alert-Kanal Funktionstest"
+        condition: B
+        for: 0s
+        noDataState: NoData
+        execErrState: Error
+        isPaused: false
+        labels:
+          severity: test
+        annotations:
+          summary: "Testbenachrichtigung – ntfy-Anbindung funktioniert ✓"
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 60
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: A
+              type: math
+              expression: "1"
+          - refId: B
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: B
+              type: classic_conditions
+              conditions:
+                - evaluator:
+                    type: gt
+                    params: [0]
+                  operator:
+                    type: and
+                  query:
+                    params: [A]
+                  reducer:
+                    type: last
+                    params: []
