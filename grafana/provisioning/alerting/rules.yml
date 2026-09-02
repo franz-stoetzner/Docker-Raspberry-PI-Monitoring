@@ -404,8 +404,9 @@ groups:
             datasourceUid: t4f0shgRk
             model:
               editorMode: code
-              # Feuert wenn ein benannter Container existiert, aber nicht im State "running" ist
-              expr: container_tasks_state{state="running", name=~".+"}
+              # Je Container alle vorhandenen Tasks zählen. Der Linux-Task-State
+              # "running" bedeutet nicht, dass der Docker-Container aktiv ist.
+              expr: sum by (instance, name) (container_tasks_state{name=~".+"})
               legendFormat: "{{instance}} / {{name}}"
               range: true
               refId: A
