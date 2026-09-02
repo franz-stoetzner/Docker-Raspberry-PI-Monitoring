@@ -12,7 +12,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: cpu-busy-85-alert
         title: "CPU Busy > 85%"
-        condition: B
+        condition: C
         for: 5m
         noDataState: NoData
         execErrState: Error
@@ -20,7 +20,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "CPU-Last auf {{ $labels.instance }}: {{ $values.A.Value | printf \"%.1f\" }}%"
+          summary: "CPU-Last auf {{ $values.A.Labels.instance }}: {{ $values.A.Value | printf \"%.1f\" }}%"
         data:
           - refId: A
             relativeTimeRange:
@@ -45,7 +45,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: gt
@@ -53,7 +66,7 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -63,7 +76,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: ram-high-90-alert
         title: "RAM > 90%"
-        condition: B
+        condition: C
         for: 5m
         noDataState: NoData
         execErrState: Error
@@ -71,7 +84,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "RAM-Auslastung auf {{ $labels.instance }}: {{ $values.A.Value | printf \"%.1f\" }}%"
+          summary: "RAM-Auslastung auf {{ $values.A.Labels.instance }}: {{ $values.A.Value | printf \"%.1f\" }}%"
         data:
           - refId: A
             relativeTimeRange:
@@ -95,7 +108,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: gt
@@ -103,7 +129,7 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -113,7 +139,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: disk-warn-85-alert
         title: "Disk > 85% (Warning)"
-        condition: B
+        condition: C
         for: 10m
         noDataState: NoData
         execErrState: Error
@@ -121,7 +147,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Disk-Auslastung auf {{ $labels.instance }} ({{ $labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
+          summary: "Disk-Auslastung auf {{ $values.A.Labels.instance }} ({{ $values.A.Labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
         data:
           - refId: A
             relativeTimeRange:
@@ -145,7 +171,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: gt
@@ -153,7 +192,7 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -163,7 +202,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: disk-crit-93-alert
         title: "Disk > 93% (Critical)"
-        condition: B
+        condition: C
         for: 5m
         noDataState: NoData
         execErrState: Error
@@ -171,7 +210,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "KRITISCH – Disk-Auslastung auf {{ $labels.instance }} ({{ $labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
+          summary: "KRITISCH – Disk-Auslastung auf {{ $values.A.Labels.instance }} ({{ $values.A.Labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
         data:
           - refId: A
             relativeTimeRange:
@@ -195,7 +234,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: gt
@@ -203,7 +255,7 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -213,7 +265,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: inodes-high-80-alert
         title: "Inodes > 80%"
-        condition: B
+        condition: C
         for: 5m
         noDataState: NoData
         execErrState: Error
@@ -221,7 +273,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Inode-Auslastung auf {{ $labels.instance }} ({{ $labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
+          summary: "Inode-Auslastung auf {{ $values.A.Labels.instance }} ({{ $values.A.Labels.mountpoint }}): {{ $values.A.Value | printf \"%.1f\" }}%"
         data:
           - refId: A
             relativeTimeRange:
@@ -245,7 +297,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: gt
@@ -253,7 +318,7 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -263,7 +328,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: container-restart-loop-alert
         title: "Container Restart-Loop"
-        condition: B
+        condition: C
         for: 0s
         noDataState: NoData
         execErrState: Error
@@ -271,7 +336,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "Container {{ $labels.name }} auf {{ $labels.instance }} wurde {{ $values.A.Value | printf \"%.0f\" }}x in 10 min neu gestartet"
+          summary: "Container {{ $values.A.Labels.name }} auf {{ $values.A.Labels.instance }} wurde {{ $values.A.Value | printf \"%.0f\" }}x in 10 min neu gestartet"
         data:
           - refId: A
             relativeTimeRange:
@@ -291,7 +356,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: gt
@@ -299,7 +377,7 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -309,7 +387,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: container-down-alert
         title: "Container down"
-        condition: B
+        condition: C
         for: 2m
         noDataState: NoData
         execErrState: Error
@@ -317,7 +395,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Container {{ $labels.name }} auf {{ $labels.instance }} läuft nicht mehr"
+          summary: "Container {{ $values.A.Labels.name }} auf {{ $values.A.Labels.instance }} läuft nicht mehr"
         data:
           - refId: A
             relativeTimeRange:
@@ -338,15 +416,28 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: lt
-                    params: [1]  # running == 0 → Container ist nicht aktiv
+                    params: [1]  # running == 0 -> Container ist nicht aktiv
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -356,7 +447,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: oom-killer-alert
         title: "OOM-Killer aktiv"
-        condition: B
+        condition: C
         for: 0s
         noDataState: NoData
         execErrState: Error
@@ -364,7 +455,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "OOM-Killer auf {{ $labels.instance }} wurde ausgelöst"
+          summary: "OOM-Killer auf {{ $values.A.Labels.instance }} wurde ausgelöst"
         data:
           - refId: A
             relativeTimeRange:
@@ -384,7 +475,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: gt
@@ -392,7 +496,7 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
@@ -402,7 +506,7 @@ groups:
       # ---------------------------------------------------------------
       - uid: host-unreachable-alert
         title: "Host nicht erreichbar"
-        condition: B
+        condition: C
         for: 1m
         noDataState: Alerting  # Kein Scrape = Host down → sofort feuern
         execErrState: Alerting
@@ -410,7 +514,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Host {{ $labels.instance }} ist nicht erreichbar (Node Exporter antwortet nicht)"
+          summary: "Host {{ $values.A.Labels.instance }} ist nicht erreichbar (Node Exporter antwortet nicht)"
         data:
           - refId: A
             relativeTimeRange:
@@ -430,7 +534,20 @@ groups:
             datasourceUid: "-100"
             model:
               refId: B
-              type: classic_conditions
+              type: reduce
+              expression: A
+              reducer: last
+              settings:
+                mode: dropNN
+          - refId: C
+            relativeTimeRange:
+              from: 0
+              to: 0
+            datasourceUid: "-100"
+            model:
+              refId: C
+              type: threshold
+              expression: B
               conditions:
                 - evaluator:
                     type: lt
@@ -438,46 +555,11 @@ groups:
                   operator:
                     type: and
                   query:
-                    params: [A]
+                    params: [B]
                   reducer:
                     type: last
                     params: []
 
-      # ---------------------------------------------------------------
-      # TEST-Alert – immer aktiv, zum Prüfen der ntfy-Anbindung
-      # Nach erfolgreichem Test: isPaused: true setzen oder Regel löschen
-      # ---------------------------------------------------------------
-      - uid: test-alert-ntfy
-        title: "TEST – Alert-Kanal Funktionstest"
-        condition: B
-        for: 0s
-        noDataState: NoData
-        execErrState: Error
-        isPaused: false
-        labels:
-          severity: test
-        annotations:
-          summary: "Testbenachrichtigung – ntfy-Anbindung funktioniert ✓"
-        data:
-          - refId: A
-            relativeTimeRange:
-              from: 60
-              to: 0
-            datasourceUid: "-100"
-            model:
-              refId: A
-              type: math
-              expression: "1"
-          - refId: B
-            relativeTimeRange:
-              from: 0
-              to: 0
-            datasourceUid: "-100"
-            model:
-              refId: B
-              type: threshold
-              expression: A
-              conditions:
-                - evaluator:
-                    type: gt
-                    params: [0]
+deleteRules:
+  - orgId: 1
+    uid: test-alert-ntfy
