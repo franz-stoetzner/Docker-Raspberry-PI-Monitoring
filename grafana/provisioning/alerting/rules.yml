@@ -158,8 +158,8 @@ groups:
               editorMode: code
               expr: >
                 100 - (
-                  node_filesystem_avail_bytes{fstype!~"rootfs|tmpfs|overlay"}
-                  / node_filesystem_size_bytes{fstype!~"rootfs|tmpfs|overlay"} * 100
+                  node_filesystem_avail_bytes{fstype!~"rootfs"}
+                  / node_filesystem_size_bytes{fstype!~"rootfs"} * 100
                 )
               legendFormat: "{{instance}} {{mountpoint}}"
               range: true
@@ -221,8 +221,8 @@ groups:
               editorMode: code
               expr: >
                 100 - (
-                  node_filesystem_avail_bytes{fstype!~"rootfs|tmpfs|overlay"}
-                  / node_filesystem_size_bytes{fstype!~"rootfs|tmpfs|overlay"} * 100
+                  node_filesystem_avail_bytes{fstype!~"rootfs"}
+                  / node_filesystem_size_bytes{fstype!~"rootfs"} * 100
                 )
               legendFormat: "{{instance}} {{mountpoint}}"
               range: true
