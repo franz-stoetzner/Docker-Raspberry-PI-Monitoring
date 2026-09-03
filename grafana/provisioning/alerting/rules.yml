@@ -395,7 +395,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Container {{ $values.A.Labels.name }} auf {{ $values.A.Labels.instance }} läuft nicht mehr"
+          summary: "Container {{ $values.A.Labels.name }} läuft nicht mehr"
         data:
           - refId: A
             relativeTimeRange:
@@ -404,19 +404,15 @@ groups:
             datasourceUid: t4f0shgRk
             model:
               editorMode: code
-              # Je Container alle vorhandenen Tasks zählen. Der Linux-Task-State
-              # "running" bedeutet nicht, dass der Docker-Container aktiv ist.
+              # Alle Linux-Task-States je Container zählen. Der Task-State
+              # "running" allein ist kein Docker-Containerstatus.
               expr: |
-                    (
-                      sum by (name) (
-                        container_tasks_state{name=~"traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter", state="running"}
-                      ) < 1
-                    )
-                    or
-                    absent_over_time(
-                      container_tasks_state{name=~"traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter"}[2m]
-                    )
-              legendFormat: "{{instance}} / {{name}}"
+                sum by (name) (
+                  container_tasks_state{
+                    name=~"^(traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter)$"
+                  }
+                ) < 1
+              legendFormat: "{{name}}"
               range: true
               refId: A
           - refId: B
