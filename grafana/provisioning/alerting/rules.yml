@@ -345,7 +345,7 @@ groups:
             datasourceUid: t4f0shgRk
             model:
               editorMode: code
-              expr: increase(container_restart_count{name=~".+"}[10m])
+              expr: sum by (instance, name) (changes(container_start_time_seconds{name=~".+"}[10m]))
               legendFormat: "{{instance}} / {{name}}"
               range: true
               refId: A
@@ -373,7 +373,7 @@ groups:
               conditions:
                 - evaluator:
                     type: gt
-                    params: [2]  # > 2 bedeutet >= 3
+                    params: [1]  # > 1 bedeutet >= 2 Restarts in 10 min → Container ist im Restart-Loop
                   operator:
                     type: and
                   query:
@@ -560,7 +560,3 @@ groups:
                   reducer:
                     type: last
                     params: []
-
-deleteRules:
-  - orgId: 1
-    uid: test-alert-ntfy
