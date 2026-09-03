@@ -284,8 +284,8 @@ groups:
               editorMode: code
               expr: >
                 100 - (
-                  node_filesystem_files_free{fstype!~"rootfs|tmpfs|overlay"}
-                  / node_filesystem_files{fstype!~"rootfs|tmpfs|overlay"} * 100
+                  node_filesystem_files_free{mountpoint=~"/||/boot/firmware||/run}
+                  / node_filesystem_files{mountpoint=~"/||/boot/firmware||/run} * 100
                 )
               legendFormat: "{{instance}} {{mountpoint}}"
               range: true
