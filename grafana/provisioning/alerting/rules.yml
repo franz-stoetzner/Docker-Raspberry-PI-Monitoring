@@ -409,18 +409,12 @@ groups:
               expr: |
                     (
                       sum by (name) (
-                        container_tasks_state{name="traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter", state="running"}
+                        container_tasks_state{name=~"traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter", state="running"}
                       ) < 1
                     )
                     or
-                    label_replace(
-                      absent_over_time(
-                        container_tasks_state{name="traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter"}[2m]
-                      ),
-                      "name",
-                      "traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter",
-                      "",
-                      ""
+                    absent_over_time(
+                      container_tasks_state{name=~"traefik|portainer|pihole|ntfy|inverter-bridge|monitoring-prometheus|monitoring-cadvisor|monitoring-node-exporter"}[2m]
                     )
               legendFormat: "{{instance}} / {{name}}"
               range: true
