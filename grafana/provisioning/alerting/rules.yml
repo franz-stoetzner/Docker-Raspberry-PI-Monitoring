@@ -158,8 +158,8 @@ groups:
               editorMode: code
               expr: >
                 100 - (
-                  node_filesystem_avail_bytes{}
-                  / node_filesystem_size_bytes{} * 100
+                  node_filesystem_avail_bytes{mountpoint=~"/||/boot/firmware||/run"}
+                  / node_filesystem_size_bytes{mountpoint=~"/||/boot/firmware||/run"} * 100
                 )
               legendFormat: "{{instance}} {{mountpoint}}"
               range: true
